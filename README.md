@@ -1,2 +1,2 @@
 # UVa
-My accepted (not all ;P) solutoins from UVa OJ
+My accepted (not all ;P) solutions from UVa OJ
