@@ -1,4 +1,4 @@
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
 string line;
 double get(int i) {
@@ -9,8 +9,7 @@ double get(int i) {
     } if(line[i] == '.') {
         double j = 10; i++; while(isdigit(line[i])) {
             ret += ((double)(line[i] - '0') / j );
-            j*=10;
-            i++;
+            j*=10, i++;
         }
     }
     if(line[i] == 'm') ret /= 1000;
