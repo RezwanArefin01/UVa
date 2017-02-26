@@ -1,4 +1,4 @@
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
 double x,y,h,w,a,b;
 #define eps (1e-6)
