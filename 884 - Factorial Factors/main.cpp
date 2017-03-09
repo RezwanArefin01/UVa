@@ -14,9 +14,6 @@ void sieve() {
 		prime.push_back(i);
 }
 int main(int argc, char const *argv[]) {
-	#ifndef ONLINE_JUDGE
-		freopen("in", "r", stdin);
-	#endif
 	sieve(); 
 	int ans[MAXN]; ans[0] = ans[1] = 0;
 	for(int n=2; n<=MAXN; n++) {
