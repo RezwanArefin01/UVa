@@ -1,105 +1,62 @@
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
-#define NIL -1
-map<string,int> m;
-int co =0;
-bool blank = false;
-class Graph{
-    int V;
-    list<int> *adj;
-    void APUtil(int u, bool visited[], int disc[],
-                int low[], int parent[], bool ap[]);
-    public:
-        Graph(int V);
-        void addEdge(int v, int w);
-        void AP();
-};
-Graph::Graph(int V) {
-    this->V = V;
-    adj = new list<int> [V];
-}
-void Graph::addEdge(int v, int w){
-    adj[v].push_back(w);
-    adj[w].push_back(v);
-}
-void Graph::APUtil(int u, bool visited[], int disc[],
-                int low[], int parent[], bool ap[]) {
-    static int time = 0;
-    int children = 0;
-    visited[u] = true;
-    disc[u] = low[u] = ++time;
+typedef long long ll;
 
-    list<int>::iterator i;
-    for (i = adj[u].begin(); i != adj[u].end(); ++i)
-    {
-        int v = *i;
-        if (!visited[v])
-        {
-            children++;
-            parent[v] = u;
-            APUtil(v, visited, disc, low, parent, ap);
+vector<int> adj[111]; 
+int cut[111], low[111], vis[111], now = 0, n, m; 
 
-            low[u]  = min(low[u], low[v]);
-            if (parent[u] == NIL && children > 1)
-               ap[u] = true;
-            if (parent[u] != NIL && low[v] >= disc[u])
-               ap[u] = true;
+void dfs(int u, int par) {
+    low[u] = vis[u] = ++now; int ch = 0; 
+    for(int v : adj[u]) if(v - par) { 
+        if(vis[v]) low[u] = min(low[u], vis[v]); 
+        else { ch++;
+            dfs(v, u); 
+            low[u] = min(low[u], low[v]); 
+            if(par + 1 && low[v] >= vis[u]) 
+                cut[u] = 1;
         }
-        else if (v != parent[u])
-            low[u]  = min(low[u], disc[v]);
-    }
+    } if(par == -1 && ch > 1) cut[u] = 1;
 }
-string find(int i) {
-    map<string,int>::iterator itr;
-    for(itr = m.begin();itr!=m.end();++itr) {
-        if(itr->second == i)
-            return itr->first;
-    }
-}
-void Graph::AP() {
-    vector<string> br;
-    bool *visited = new bool[V];
-    int *disc = new int[V];
-    int *low = new int[V];
-    int *parent = new int[V];
-    bool *ap = new bool[V];
 
-    for (int i = 0; i < V; i++) {
-        parent[i] = NIL;
-        visited[i] = false;
-        ap[i] = false;
+void ArticulationPoint() {
+    memset(vis, 0, sizeof vis);
+    memset(low, 0, sizeof low); 
+    memset(cut, 0, sizeof cut); 
+    now = 0; 
+    for(int i = 0; i < n; i++) {
+        if(!vis[i]) dfs(i, -1); 
     }
-    for (int i = 0; i < V; i++)
-        if (visited[i] == false)
-            APUtil(i, visited, disc, low, parent, ap);
-    for (int i = 0; i < V; i++)
-        if (ap[i] == true) {
-            br.push_back(find(i));
-        }
-    if(blank) cout<<endl;
-    blank = true;
-    cout<<"City map #"<<++co<<": "<<br.size()<<" camera(s) found\n";
-    sort(br.begin(),br.end());
-    for(int i=0;i<br.size();i++)
-        cout<<br[i]<<endl;
 }
-int main(){
-    int n,r;
-    string str,a,b;
-    while(cin>>n && n) {
-        m.erase(m.begin(),m.end());
-        int tag = 0;
-        Graph g(n);
-        while(n--) {
-            cin>>str;
-            m[str] = tag++;
+int main(int argc, char const *argv[]) {
+    int co = 0, f = 0; while(cin >> n && n) {
+        if(f) cout << endl; 
+        f = 1;
+        map<string, int> mp; 
+        map<int, string> rev;
+        for(int i = 0; i < n; i++) {
+            adj[i].clear(); 
+            string str; cin >> str;
+            mp[str] = i;
+            rev[i] = str; 
         }
-        cin>>r;
-        while(r--) {
-            cin>>a>>b;
-            g.addEdge(m[a],m[b]);
+        cin >> m; 
+        while(m--) {
+            string u, v; 
+            cin >> u >> v;
+            adj[mp[u]].push_back(mp[v]);
+            adj[mp[v]].push_back(mp[u]); 
         }
-        g.AP();
+
+        ArticulationPoint(); 
+
+        vector<string> v; 
+        for(int i = 0; i < n; i++) 
+            if(cut[i]) v.push_back(rev[i]);
+
+        printf("City map #%d: %d camera(s) found\n", ++co, v.size());
+        sort(v.begin(), v.end());
+        for(string x : v) {
+            cout << x << endl;
+        }
     }
-    return 0;
 }
