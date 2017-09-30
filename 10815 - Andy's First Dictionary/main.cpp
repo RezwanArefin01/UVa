@@ -1,14 +1,10 @@
 #include<bits/stdc++.h>
 using namespace std;
-int main()
-{
-    //freopen("in.txt","r",stdin);
+int main() {
     set<string>s;
-    int i,l;
-    char ar[205];
+    char str[205];
     while(gets(ar)){
-        string x="";
-        l=strlen(ar);
+        string s = "";
         for(i=0;i<=l;i++) {
             if(isalpha(ar[i]))
                 x+=tolower(ar[i]);
