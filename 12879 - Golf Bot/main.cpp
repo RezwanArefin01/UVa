@@ -1,12 +1,8 @@
+#pragma GCC optimize("Ofast,unroll-loops,no-stack-protector")
+#pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,tune=native")
+
 #include <bits/stdc++.h>
 using namespace std;
-
-typedef long long ll;
-typedef pair<int, int> ii; 
-
-#pragma comment(linker, "/stack:200000000")
-#pragma GCC optimize("Ofast")
-#pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,tune=native")
 
 typedef long double ld; 
 ld PI = acosl(-1);
