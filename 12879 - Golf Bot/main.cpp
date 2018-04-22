@@ -4,8 +4,8 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-typedef long double ld; 
-ld PI = acosl(-1);
+typedef double ld; 
+ld PI = acos(-1);
 
 struct base {
 	ld a, b;
@@ -19,37 +19,27 @@ struct base {
 }; 
 
 const int N = 1 << 19; 
-base w[2][20][N]; 
-int rev[N]; 
+base w_pre[N|1], w[N|1]; int rev[N];
 
 void calcw() { 	
-	for(int d = 0; d < 2; ++d) {
-		for(int i = 1; i <= 19; ++i) {
-			int l = 1 << i; 
-			ld ang = (d ? 2 : -2) * PI / l;
-			base wn(cos(ang), sin(ang)); 
-			w[d][i][0] = base(1, 0);
-			for(int j = 1; j < (l >> 1); ++j) {
-				w[d][i][j] = w[d][i][j - 1] * wn;
-			}
-		}
-	} 
-} 
-void calcrev(int n) { int i = 0;
-	for(int j = 1; j < n - 1; ++j) {
-		for(int k = n >> 1; k > (i ^= k); k >>= 1);
-		rev[j] = i; 
-	} 
+	for(int i = 0; i <= N; ++i) 
+		w_pre[i] = base(cos(2*PI/N*i), sin(2*PI/N*i));
+}    
+void calcrev(int n) {
+	int sz = 31 - __builtin_clz(n); sz = abs(sz);
+	for(int i = 1; i < n - 1; ++i) 
+		rev[i] = (rev[i >> 1] >> 1) | ((i & 1) << sz - 1); 
 }
 base p[N];
 void fft(int n, int dir) {
 	for(int i = 1; i < n - 1; i++) 
 		if(i < rev[i]) swap(p[i], p[rev[i]]);
-	int lg = 31 - __builtin_clz(n); 
-	for(int i = 1; i <= lg; ++i) { int l = 1 << i; 
+	for(int h = 1; h < n; h <<= 1) { int l = h << 1; 
+		if(!dir) for(int j = 0; j < h; ++j) w[j] = w_pre[N/l*j]; 
+		else for(int j = 0; j < h; ++j) w[j] = w_pre[N-N/l*j];
 		for(int j = 0 ; j < n; j += l) {
-			base t, *wn = w[dir][i]; 
-			base *u = p + j, *v = u + (l >> 1), *e = v; 
+			base t, *wn = w; 
+			base *u = p + j, *v = u + h, *e = v; 
 			while(u != e) {
 				t = *v * *wn;
 				*v = *u - t; 
@@ -60,8 +50,10 @@ void fft(int n, int dir) {
 	} if(dir) for(int i = 0; i < n; ++i) p[i].a /= n, p[i].b /= n;
 } 
 
-
 int main(int argc, char const *argv[]) {
+#ifdef LOCAL_TESTING
+	freopen("in", "r", stdin);
+#endif
 	calcw(); calcrev(N);
 	int n, m, x;
 	while(scanf("%d", &n) == 1) {
